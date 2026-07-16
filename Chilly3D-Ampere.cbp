@@ -23,7 +23,9 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="Chilly3D/Windows/hal.h" />
 		<Unit filename="Chilly3D/engine.h" />
+		<Unit filename="Chilly3D/typex.h" />
 		<Unit filename="main.cpp" />
 		<Extensions />
 	</Project>

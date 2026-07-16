@@ -1,4 +1,17 @@
 # depslib dependency file v1.0
-1743445502 source:c:\users\chillybox\documents\github\chilly3d-ampere\main.cpp
-	<iostream>
+1784173215 source:c:\users\chillybox\documents\github\chilly3d-ampere\main.cpp
+	"Chilly3D/engine.h"
+
+1784174206 c:\users\chillybox\documents\github\chilly3d-ampere\chilly3d\engine.h
+	"typex.h"
+
+1784173667 c:\users\chillybox\documents\github\chilly3d-ampere\chilly3d\typex.h
+	<stdio.h>
+	<stdarg.h>
+	<stdlib.h>
+	<stdint.h>
+	"Windows/hal.h"
+
+1784174088 c:\users\chillybox\documents\github\chilly3d-ampere\chilly3d\windows\hal.h
+	<windows.h>
 
