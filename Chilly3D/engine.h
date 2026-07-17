@@ -4,6 +4,7 @@
 #define C3D_API_TITLE "Chilly3D-Engine"
 #define C3D_API_VERSION_MAJOR 1
 #define C3D_API_VERSION_MINOR 0
+#define C3D_API_BPP 16 /// Bits por pixel
 
 #define C3D_API C3D_ENGINE_H inline
 
@@ -82,10 +83,20 @@ public:
 				C3D_API_TITLE
 			);
 		}
+		else
+		{
+			/// Si todo sale bien, root.flags.loop es 'true'
+			/// Solo por depuracion no lo vamos a activar hasta que
+			/// Terminemos de escribir todo el codigo minimo y funcional
+			/// para poner en marcha el motor grafico.
+
+			root.flags.loop = true;
+		}
 	}
 
 	bool update(void)
 	{
+		hal_video_present();
 		return root.flags.loop;
 	}
 

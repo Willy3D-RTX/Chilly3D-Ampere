@@ -29,6 +29,18 @@
 	#error "Plataforma desconocida o no compatible con el motor Chilly3D-Engine"
 #endif /// Fin de las comprobaciones de la plataforma.
 
+#if C3D_API_BPP == 8
+	typedef uint8_t C3D_Pixel;
+#elif C3D_API_BPP == 16
+	typedef uint16_t C3D_Pixel;
+#elif C3D_API_BPP == 24
+	typedef uint32_t C3D_Pixel;
+#elif C3D_API_BPP == 32
+	typedef uint32_t C3D_Pixel;
+#else
+	#error "Error en C3D_API_BPP: Debe valer 8, 16, 24 o 32 bits!"
+#endif // C3D_API_BPP
+
 /*
 	Lista de colores de los mensajes.
 */
@@ -64,7 +76,7 @@ typedef struct
 {
 	bool debug = false;
 	bool ansi = false;
-	bool loop = false;
+	bool loop = false; /// Esta flag activa pone en marcha al motor grafico.
 	bool error = false;
 } C3D_Flags_t;
 
