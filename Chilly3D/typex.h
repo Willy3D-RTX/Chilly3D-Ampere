@@ -68,6 +68,13 @@ typedef struct
 	bool error = false;
 } C3D_Flags_t;
 
+typedef struct
+{
+	uint16_t w = 0;
+	uint16_t h = 0;
+	uint16_t freq = 0;
+} C3D_Monitor_t;
+
 /*
 	Estructura de datos para el subsistema de Video.
 */
@@ -79,6 +86,7 @@ typedef struct
 	uint16_t height = 0;
 	uint16_t* dat_0 = nullptr; /// Buffer principal de video.
 	uint16_t* dat_1 = nullptr; /// Almacen para el doblebuffer de video.
+	C3D_Monitor_t monitor[5] = {};
 } C3D_Video_t;
 
 /*

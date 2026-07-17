@@ -73,6 +73,15 @@ public:
 		root.video.width = _width;
 		root.video.height = _height;
 		hal_video_createWindow();
+		if (root.flags.error == true)
+		{
+			message.error(
+				__FILE__,
+				__LINE__,
+				"Error al poner en marcha a %s",
+				C3D_API_TITLE
+			);
+		}
 	}
 
 	bool update(void)

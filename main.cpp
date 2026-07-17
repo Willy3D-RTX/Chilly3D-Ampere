@@ -1,4 +1,7 @@
 /// Libreria del motor
+/// Si el codigo les parece raro, es por que estoy mezclando c y c++.
+/// Este dato es para lo mas purista del codigo c/c++. ;)
+
 #include "Chilly3D/engine.h"
 
 C3D_Engine_class engine;
