@@ -1,7 +1,7 @@
 #ifndef C3D_TYPEX_H
 #define C3D_TYPEX_H
 #define C3D_TYPEX_LINES 263
-#define C3D_TYPEX_BUFFER_SIZE 255
+#define C3D_TYPEX_BUFFER_SIZE 280
 
 #define C3D_VIDEO_WIDTH_MIN 320
 #define C3D_VIDEO_HEIGHT_MIN 200
@@ -88,6 +88,7 @@ typedef struct
 typedef enum {
 	C3D_EVENTS_NONE = 0,
 	C3D_EVENTS_QUIT,
+	C3D_EVENTS_EXIT_EMERGENCY,
 	C3D_EVENTS_KEY_DOWN,
 	C3D_EVENTS_KEY_up
 } C3D_Events_type_t;
@@ -136,6 +137,22 @@ typedef struct
 	Root del proyecto.
 */
 C3D_Root_t root = {};
+
+/*
+	Hace las transformaciones matematicas de RGB888 a RGB565.
+*/
+C3D_Api C3D_Pixel C3D_RGB565(int _r, int _g, int _b)
+{
+	if (_r < 0) { _r = 0; } if (_r > 255) { _r = 255; }
+	if (_g < 0) { _g = 0; } if (_g > 255) { _g = 255; }
+	if (_b < 0) { _b = 0; } if (_b > 255) { _b = 255; }
+
+	return (uint16_t)(
+		((_r & 0xF8) << 8) | /// 5 bits de R, a partir del bit 11.
+		((_g & 0xFC) << 3) | /// 6 bits de G, a partir del bit 5.
+		((_b & 0xF8) >> 3)   /// 5 bits de B, a partir del bit 0.
+	);
+}
 
 /*
 	Clase de C3D_Message_class, controla el envio de mensajes del sistema.

@@ -1,6 +1,6 @@
 #ifndef C3D_HAL_H
 #define C3D_HAL_H
-#define C3D_HAL_LINES 370
+#define C3D_HAL_LINES 421
 
 #include <windows.h>
 
@@ -27,17 +27,28 @@ static C3D_BitmapInfo565_t __bmi = {};
 	Procedimiento de ventana (WndProc). Solo necesita reaccionar a cerrar
 	la ventana; el pintado normal se hace desde hal_video_present().
 */
-static LRESULT CALLBACK __wndProc(HWND _hwnd, UINT _msg, WPARAM _wParam, LPARAM _lParam)
+static LRESULT CALLBACK __wndProc(
+	HWND _hwnd,
+	UINT _msg,
+	WPARAM _wParam,
+	LPARAM _lParam
+)
 {
 	switch (_msg)
 	{
 		case WM_DESTROY:
-			root.flags.loop = false;
+			message.event(
+				__FILE__,
+				__LINE__,
+				"Se destruyo la instancia de la ventana"
+			);
+			///root.flags.loop = false;
 			PostQuitMessage(0);
 			return 0;
 
 		case WM_ERASEBKGND:
-			/// Evita que Windows borre el fondo antes de cada pintado (flicker).
+			/// Evita que Windows borre el fondo antes de
+			/// cada pintado (flicker).
 			return 1;
 
 		case WM_PAINT:
@@ -58,9 +69,14 @@ static LRESULT CALLBACK __wndProc(HWND _hwnd, UINT _msg, WPARAM _wParam, LPARAM 
 		}
 
 		case WM_KEYDOWN:
-			if (_wParam == VK_ESCAPE)
+			if (_wParam == VK_F12)
 			{
-				root.flags.loop = false;
+				message.event(
+					__FILE__,
+					__LINE__,
+					"Se presiono el boton de salida de emergecia!"
+				);
+				root.events.type = C3D_EVENTS_EXIT_EMERGENCY;
 				PostQuitMessage(0);
 			}
 			return 0;
@@ -394,6 +410,11 @@ C3D_Api C3D_Pixel hal_video_getPixel(int _x, int _y)
 */
 C3D_Api void hal_video_clear(C3D_Pixel _color)
 {
-
+	uint16_t* buffer = __drawTarget();
+	uint32_t total = (uint32_t)root.video.width * (uint32_t)root.video.height;
+	for (uint32_t i = 0; i < total; i++)
+	{
+		buffer[i] = (uint16_t)_color;
+	}
 }
 #endif // C3D_HAL_H

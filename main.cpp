@@ -15,7 +15,24 @@ int main()
 	engine.init(480, 270);
 	while (engine.update())
 	{
+		/// EUREKA!!! ALLI ESTA EL PIXEL EN PANTALLA!
 		hal_video_putPixel(100, 100, 0xFFFF);
+		/// Cuadrado de 20x20 en (100,100), color rojo puro,
+		/// bien visible para confirmar que el render funciona.
+		for (int y = 0; y < 20; y++)
+		{
+			for (int x = 0; x < 20; x++)
+			{
+				hal_video_putPixel(
+					100 + x, 100 + y,
+					C3D_RGB565(50+(x*2),100+(y*2), 100+x+y)
+				);
+			}
+		}
+		/// Hasta aqui dejo el codigo!
+		/// Mañana continuo
+		/// Solo nos faltaria hacer las correcciones a FULLSCREE!
+		/// Hasta la próxima amigos
 	}
 	engine.dispose();
     return 0;
