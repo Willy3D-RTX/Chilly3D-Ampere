@@ -1,12 +1,17 @@
 #ifndef C3D_ENGINE_H
 #define C3D_ENGINE_H
+#define C3D_ENGINE_LINES 116
 
 #define C3D_API_TITLE "Chilly3D-Engine"
 #define C3D_API_VERSION_MAJOR 1
 #define C3D_API_VERSION_MINOR 0
 #define C3D_API_BPP 16 /// Bits por pixel
 
-#define C3D_API C3D_ENGINE_H inline
+#define C3D_API_COMPILED_LINES (\
+		C3D_ENGINE_LINES +\
+		C3D_TYPEX_LINES+\
+		C3D_HAL_LINES\
+		)
 
 #include "typex.h"
 
@@ -89,14 +94,21 @@ public:
 			/// Solo por depuracion no lo vamos a activar hasta que
 			/// Terminemos de escribir todo el codigo minimo y funcional
 			/// para poner en marcha el motor grafico.
-
 			root.flags.loop = true;
+			message.engine(
+				__FILE__,
+				__LINE__,
+				"Lineas compiladas: %d",
+				C3D_API_COMPILED_LINES
+			);
 		}
 	}
 
 	bool update(void)
 	{
 		hal_video_present();
+		hal_video_clear(0);
+		if (root.events.type == C3D_EVENTS_QUIT) { root.flags.loop = false; }
 		return root.flags.loop;
 	}
 

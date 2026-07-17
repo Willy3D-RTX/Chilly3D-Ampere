@@ -13,7 +13,10 @@ int main()
 	engine.setup(C3D_SETUP_FULLSCREEN, false);
 	engine.setup(C3D_SETUP_DOBLEBUFFER, true);
 	engine.init(480, 270);
-	while (engine.update()) {}
+	while (engine.update())
+	{
+		hal_video_putPixel(100, 100, 0xFFFF);
+	}
 	engine.dispose();
     return 0;
 }

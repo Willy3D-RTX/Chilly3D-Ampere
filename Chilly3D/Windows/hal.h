@@ -1,5 +1,6 @@
 #ifndef C3D_HAL_H
 #define C3D_HAL_H
+#define C3D_HAL_LINES 370
 
 #include <windows.h>
 
@@ -68,9 +69,38 @@ static LRESULT CALLBACK __wndProc(HWND _hwnd, UINT _msg, WPARAM _wParam, LPARAM 
 }
 
 /*
+	Funcion para gestionar los eventos de sistema.
+	En esta funcion quiero detectar las teclas que se presionan!
+	Por ejemplo A, S, D, W... F1, ..., F12, etc.
+*/
+C3D_Api void hal_cpu_events(void)
+{
+	MSG msg;
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	{
+		/// F12 es el boton de cierre de emergencia!
+		if (msg.message == WM_QUIT)
+		{
+			message.event(
+				__FILE__,
+				__LINE__,
+				"Se presiono el boton Close [x] de windows!"
+			);
+			root.events.type = C3D_EVENTS_QUIT;
+			return;
+		}
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+		/// Muchas gracias por su apoyo @thejotap3
+		/// Esten pendientes al codigo, espero ponerlo en marcha
+		/// hoy mismo amigos! Saludos :)
+	}
+}
+
+/*
 	Funcion para crear una ventana en Microsoft Windows.
 */
-C3D_API void hal_video_createWindow(void)
+C3D_Api void hal_video_createWindow(void)
 {
 	message.info(
 		__FILE__,
@@ -212,17 +242,13 @@ C3D_API void hal_video_createWindow(void)
 	__bmi.masks[0] = 0xF800; /// R
 	__bmi.masks[1] = 0x07E0; /// G
 	__bmi.masks[2] = 0x001F; /// B
-
-	/// A partir de aqui el motor ya puede entrar en su ciclo principal.
-	root.flags.loop = true;
-
 	message.info(__FILE__, __LINE__, "Ventana creada correctamente");
 }
 
 /*
 	Funcion para intercambiar buffer de video.
 */
-C3D_API void hal_video_swapBuffer(void)
+C3D_Api void hal_video_swapBuffer(void)
 {
 	if (root.video.doblebuffer == true)
 	{
@@ -239,22 +265,21 @@ C3D_API void hal_video_swapBuffer(void)
 	Tambien procesa los mensajes pendientes de la ventana (equivalente a
 	un "poll de eventos"), por lo que debe llamarse una vez por frame.
 */
-C3D_API void hal_video_present(void)
+C3D_Api void hal_video_present(void)
 {
-	MSG msg;
-	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-	{
-		if (msg.message == WM_QUIT)
-		{
-			root.flags.loop = false;
-			return;
-		}
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
+//	MSG msg;
+//	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+//	{
+//		if (msg.message == WM_QUIT)
+//		{
+//			root.flags.loop = false;
+//			return;
+//		}
+//		TranslateMessage(&msg);
+//		DispatchMessage(&msg);
+//	}
+	hal_cpu_events();
 	hal_video_swapBuffer();
-
 	StretchDIBits(
 		__hdc,
 		0, 0, root.video.width, root.video.height,
@@ -269,7 +294,7 @@ C3D_API void hal_video_present(void)
 /*
 	Funcion para cerrar y limpiar la memoria de Video.
 */
-C3D_API void hal_video_dispose(void)
+C3D_Api void hal_video_dispose(void)
 {
 	message.info(
 		__FILE__,
@@ -313,7 +338,7 @@ C3D_API void hal_video_dispose(void)
 /*
 	Funcion para hacer delays en milisegundos.
 */
-C3D_API void hal_cpu_delayMS(uint64_t _milliseconds)
+C3D_Api void hal_cpu_delayMS(uint64_t _milliseconds)
 {
 	Sleep((DWORD)_milliseconds);
 }
@@ -321,27 +346,54 @@ C3D_API void hal_cpu_delayMS(uint64_t _milliseconds)
 /*
 	Funcion para obtener los milisegundos desde que se inicio el motor grafico.
 */
-C3D_API uint64_t hal_cpu_getTicks(void)
+C3D_Api uint64_t hal_cpu_getTicks(void)
 {
 	return (uint64_t)GetTickCount64();
 }
 
 /*
-	Funcion para dibujar pixeles en el buffer de video
-	Nota: Se debe tener cuidado con el doblebuffer!
+	Devuelve el buffer sobre el que se debe DIBUJAR en este momento.
+	Si hay doblebuffer, se dibuja sobre dat_1 (dat_0 es lo que ya esta
+	en pantalla); si no, se dibuja directo sobre dat_0.
 */
-C3D_API void hal_video_putPixel(int x, int y, C3D_Pixel color)
+static C3D_Api uint16_t* __drawTarget(void)
 {
-
+	return root.video.doblebuffer ? root.video.dat_1 : root.video.dat_0;
 }
 
 /*
 	Funcion para dibujar pixeles en el buffer de video
 	Nota: Se debe tener cuidado con el doblebuffer!
 */
-C3D_API C3D_Pixel hal_video_putPixel(int x, int y)
+C3D_Api void hal_video_putPixel(int _x, int _y, C3D_Pixel _color)
+{
+	if (_x < 0 || _y < 0 || _x >= root.video.width || _y >= root.video.height)
+	{
+		return;
+	}
+	uint16_t* buffer = __drawTarget();
+	buffer[(_y * root.video.width) + _x] = (uint16_t)_color;
+}
+
+/*
+	Funcion para obtener pixeles en el buffer de video
+	Nota: Se debe tener cuidado con el doblebuffer!
+*/
+C3D_Api C3D_Pixel hal_video_getPixel(int _x, int _y)
+{
+	if (_x < 0 || _y < 0 || _x >= root.video.width || _y >= root.video.height)
+	{
+		return (C3D_Pixel)0;
+	}
+	uint16_t* buffer = __drawTarget();
+	return (C3D_Pixel)buffer[(_y * root.video.width) + _x];
+}
+
+/*
+	Funcion para limpiar el buffer de video.
+*/
+C3D_Api void hal_video_clear(C3D_Pixel _color)
 {
 
 }
-
 #endif // C3D_HAL_H

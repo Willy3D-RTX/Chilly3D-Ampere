@@ -1,5 +1,6 @@
 #ifndef C3D_TYPEX_H
 #define C3D_TYPEX_H
+#define C3D_TYPEX_LINES 263
 #define C3D_TYPEX_BUFFER_SIZE 255
 
 #define C3D_VIDEO_WIDTH_MIN 320
@@ -28,7 +29,7 @@
 #else
 	#error "Plataforma desconocida o no compatible con el motor Chilly3D-Engine"
 #endif /// Fin de las comprobaciones de la plataforma.
-
+#define C3D_Api C3D_ENGINE_H inline
 #if C3D_API_BPP == 8
 	typedef uint8_t C3D_Pixel;
 #elif C3D_API_BPP == 16
@@ -80,6 +81,21 @@ typedef struct
 	bool error = false;
 } C3D_Flags_t;
 
+/*
+	Lista de eventos generales del sistema:
+	Window, linux, MacOS, Android, ESP32, ETC
+*/
+typedef enum {
+	C3D_EVENTS_NONE = 0,
+	C3D_EVENTS_QUIT,
+	C3D_EVENTS_KEY_DOWN,
+	C3D_EVENTS_KEY_up
+} C3D_Events_type_t;
+
+typedef struct {
+	C3D_Events_type_t type = {};
+} C3D_Events_t;
+
 typedef struct
 {
 	uint16_t w = 0;
@@ -108,6 +124,8 @@ typedef struct
 {
 	char prompt[64] = C3D_API_TITLE;
 	char error[C3D_TYPEX_BUFFER_SIZE] = {};
+
+	C3D_Events_t events = {};
 
 	C3D_Flags_t flags = {};
 
